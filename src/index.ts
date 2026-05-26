@@ -44,6 +44,32 @@ type ParsedSubagentResponse = {
 	edits?: RawEdit[];
 	judgment_items?: Array<Record<string, unknown>>;
 };
+type ProcessSectionResult = {
+	ok: true;
+	run_id: string;
+	section_id: string;
+	decision: string;
+	edits: ValidatedEdit[];
+	judgment_items: Array<Record<string, unknown>>;
+	_meta: {
+		model: string;
+		edit_count: number;
+		span_problems: number;
+		stop_reason: string | null;
+		output_tokens: number | null;
+		section_chars: number;
+		retries_used?: number;
+	};
+};
+type AttemptOutcome =
+	| { kind: "ok"; result: ProcessSectionResult }
+	| {
+			kind: "transient" | "truncated";
+			error: string;
+			detail?: string;
+			raw?: string;
+			output_tokens?: number | null;
+	  };
 
 // ---------- subagent prompt construction ----------
 function buildSubagentSystemPrompt(attorney: string): string {
@@ -292,37 +318,46 @@ export class MyMCP extends McpAgent<Env> {
 				}
 
 				const system = buildSubagentSystemPrompt(attorney);
-				const user = buildSubagentUserPrompt(section_id, section_text, deal_summary, asset_pack);
+				const baseUser = buildSubagentUserPrompt(section_id, section_text, deal_summary, asset_pack);
+				// Nudge appended only on a truncation retry — an identical re-call would
+				// just truncate again, so we ask for fewer, more surgical edits.
+				const SURGICAL_NUDGE =
+					"\n\nIMPORTANT: Your previous attempt was too long and was cut off. Be far more surgical: emit only the most important 1-2 edits, use the SHORTEST possible spans, and keep rationales to a few words. JSON only.";
 
-				try {
-					const res = await fetch("https://api.anthropic.com/v1/messages", {
-						method: "POST",
-						headers: {
-							"x-api-key": apiKey,
-							"anthropic-version": "2023-06-01",
-							"content-type": "application/json",
-						},
-						body: JSON.stringify({
-							model: SUBAGENT_MODEL,
-							max_tokens: SUBAGENT_MAX_TOKENS,
-							system,
-							messages: [{ role: "user", content: user }],
-						}),
-					});
+				// One attempt. Returns a tagged outcome so the loop can decide whether to retry.
+				// - kind "ok":        a usable result (including a clean LEAVE/FLAG with no edits) — NEVER retried
+				// - kind "transient": API error / unparseable — retry an identical call
+				// - kind "truncated": hit max_tokens — retry WITH the surgical nudge
+				const attempt = async (useNudge: boolean): Promise<AttemptOutcome> => {
+					let res: Response;
+					try {
+						res = await fetch("https://api.anthropic.com/v1/messages", {
+							method: "POST",
+							headers: {
+								"x-api-key": apiKey,
+								"anthropic-version": "2023-06-01",
+								"content-type": "application/json",
+							},
+							body: JSON.stringify({
+								model: SUBAGENT_MODEL,
+								max_tokens: SUBAGENT_MAX_TOKENS,
+								system,
+								messages: [{ role: "user", content: useNudge ? baseUser + SURGICAL_NUDGE : baseUser }],
+							}),
+						});
+					} catch (e) {
+						return { kind: "transient", error: `subagent threw: ${e instanceof Error ? e.message : String(e)}` };
+					}
 
 					if (!res.ok) {
 						const errBody = await res.text();
-						return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: `subagent API ${res.status}`, detail: errBody.slice(0, 400) }) }] };
+						return { kind: "transient", error: `subagent API ${res.status}`, detail: errBody.slice(0, 400) };
 					}
 
 					const data = (await res.json()) as AnthropicResponse;
 
 					if (data.stop_reason === "max_tokens") {
-						return { content: [{ type: "text", text: JSON.stringify({
-							ok: false, run_id, section_id, error: "truncated",
-							detail: "Subagent hit max_tokens; response incomplete. Flag this section for manual review.",
-							output_tokens: data.usage?.output_tokens ?? null,
-						}) }] };
+						return { kind: "truncated", error: "truncated", output_tokens: data.usage?.output_tokens ?? null };
 					}
 
 					const rawText = data.content?.filter((b) => b.type === "text").map((b) => b.text).join("\n") ?? "";
@@ -331,34 +366,61 @@ export class MyMCP extends McpAgent<Env> {
 					try {
 						parsed = extractJson(rawText);
 					} catch (e) {
-						return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: "unparseable", raw: rawText.slice(0, 600) }) }] };
+						return { kind: "transient", error: "unparseable", raw: rawText.slice(0, 600) };
 					}
 
 					const edits = classifyAndValidate(parsed.edits ?? [], section_text);
-					const spanProblems = edits.filter((e) => !e._span_valid).length;
-
-					const result = {
-						ok: true,
-						run_id,
-						section_id,
-						decision: parsed.decision ?? "LEAVE",
-						edits,
+					return {
+						kind: "ok",
+						result: {
+							ok: true,
+							run_id,
+							section_id,
+							decision: parsed.decision ?? "LEAVE",
+							edits,
 							judgment_items: Array.isArray(parsed.judgment_items)
 								? parsed.judgment_items.map((j: Record<string, unknown>) => ({ section_id, ...j }))
-							: [],
-						_meta: {
-							model: SUBAGENT_MODEL,
-							edit_count: edits.length,
-							span_problems: spanProblems,
-							stop_reason: data.stop_reason ?? null,
-							output_tokens: data.usage?.output_tokens ?? null,
-							section_chars: section_text.length,
+								: [],
+							_meta: {
+								model: SUBAGENT_MODEL,
+								edit_count: edits.length,
+								span_problems: edits.filter((e) => !e._span_valid).length,
+								stop_reason: data.stop_reason ?? null,
+								output_tokens: data.usage?.output_tokens ?? null,
+								section_chars: section_text.length,
+							},
 						},
 					};
-					return { content: [{ type: "text", text: JSON.stringify(result, null, 2) }] };
-				} catch (e) {
-					return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: `subagent threw: ${e instanceof Error ? e.message : String(e)}` }) }] };
+				};
+
+				// Retry loop: up to 3 total attempts. A clean result returns immediately
+				// (a LEAVE/FLAG with no edits is a clean result — not a failure — so it is
+				// never retried). Only transient/truncated failures are retried; truncation
+				// retries use the surgical nudge. After attempts are spent, return the last
+				// failure as ok:false so the orchestrator flags it (and never authors an edit).
+				const MAX_ATTEMPTS = 3;
+				let last: AttemptOutcome | null = null;
+				let retries_used = 0;
+				for (let i = 0; i < MAX_ATTEMPTS; i++) {
+					const useNudge = last?.kind === "truncated";
+					const outcome = await attempt(useNudge);
+					if (outcome.kind === "ok") {
+						outcome.result._meta.retries_used = i;
+						return { content: [{ type: "text", text: JSON.stringify(outcome.result, null, 2) }] };
+					}
+					last = outcome;
+					retries_used = i + 1;
 				}
+
+				// Retries exhausted — genuine failure.
+				return { content: [{ type: "text", text: JSON.stringify({
+					ok: false,
+					run_id,
+					section_id,
+					error: last?.error ?? "unknown",
+					detail: last?.detail ?? last?.raw ?? "Subagent failed after retries; flag this section for manual review — do NOT author an edit.",
+					retries_used,
+				}) }] };
 			},
 		);
 
