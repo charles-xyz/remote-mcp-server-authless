@@ -17,17 +17,42 @@ const AssetPackSchema = z.enum([
 ]);
 
 const SUBAGENT_MODEL = "claude-sonnet-4-5";
+const SUBAGENT_MAX_TOKENS = 8000;
+
+type AnthropicTextBlock = { type: string; text?: string };
+type AnthropicResponse = {
+	content?: AnthropicTextBlock[];
+	stop_reason?: string;
+	usage?: { output_tokens?: number };
+};
+type RawEdit = {
+	span?: unknown;
+	new_text?: unknown;
+	rubric_id?: unknown;
+	rationale?: unknown;
+};
+type ValidatedEdit = {
+	span: string;
+	new_text: string;
+	op: "delete" | "insert" | "replace";
+	rubric_id: unknown;
+	rationale: string;
+	_span_valid: boolean;
+};
+type ParsedSubagentResponse = {
+	decision?: string;
+	edits?: RawEdit[];
+	judgment_items?: Array<Record<string, unknown>>;
+};
 
 // ---------- subagent prompt construction ----------
-// The playbook is baked in fresh for every section. The subagent sees ONLY
-// the playbook + one section. No accumulated history — that is the whole point.
 function buildSubagentSystemPrompt(attorney: string): string {
 	const prefs = (ATTORNEY_PREFS as any)[attorney] ?? null;
 	const prefLines: string[] = [];
 	if (prefs?.seller_notes?.length) {
 		for (const n of prefs.seller_notes) prefLines.push(`- ${n}`);
 	}
-	const teamWide = (ATTORNEY_PREFS as any).team_wide ?? [];
+	const teamWide: string[] = (ATTORNEY_PREFS as any).team_wide ?? [];
 
 	return `You are a senior Texas commercial real estate attorney at the Pivnick Firm, producing a FIRST-PASS SELLER-SIDE redline of ONE section of a Purchase and Sale Agreement (PSA). You are reviewing opposing (buyer) counsel's draft.
 
@@ -62,34 +87,47 @@ ${JSON.stringify(POLICY_SELLER.authorized_signatory)}
 ${POLICY_SELLER.named_counsel_gate}
 ${POLICY_SELLER.notice_block_seller}
 
-== ANCHOR DISCIPLINE (critical — the edit must apply in Word) ==
-${POLICY_SELLER.anchor_guidance}
-
 == ATTORNEY PREFERENCES (${prefs?.name ?? attorney}) — these OVERRIDE the rubric where they conflict ==
 ${prefLines.length ? prefLines.join("\n") : "(none specific to this attorney)"}
 
 == TEAM-WIDE RULES ==
-${teamWide.map((t: string) => `- ${t}`).join("\n")}
+${teamWide.map((t) => `- ${t}`).join("\n")}
 
 == TEXAS LEGAL ANCHORS (internalize; do not over-cite) ==
 - Fair-notice doctrine (Dresser/Reyes): conspicuous + express. ALL CAPS satisfies conspicuousness when paired with express trigger language.
 - DTPA (Tex. Bus. & Com. Code §17.41): SELLER-SIDE — preserve the full DTPA waiver as drafted.
 - Express-negligence rule: indemnity reaching a party's own negligence requires "WHETHER ARISING WHOLLY OR IN PART FROM" + conspicuous formatting.
 
+== BUSINESS-TERM RULE (critical) ==
+NEVER edit a business/economic term. Price, purchase-price escalators (e.g., CPI adjustments), dollar amounts, percentages, caps, baskets, deposit amounts, interest rates, dates, and deadlines are deal economics, not legal-form positions. When you encounter one a seller might want to change, do NOT edit it — surface it as a judgment_item (kind="business-number-blank" or "deal-specific-position"). Editing a business term is a REJECT.
+
+== THE EDIT CONTRACT (read carefully — this is how every edit is expressed) ==
+Every edit is a single uniform shape: { "span": ..., "new_text": ... }.
+- "span" is text copied VERBATIM, character-for-character, from the section text below. It is the exact text in the document this edit acts on. Never paraphrase it, never fix its typos, never normalize its quotes.
+- "new_text" is what that span becomes.
+
+The three kinds of edit are just three settings of this one shape:
+- REPLACE: span = the existing text to change; new_text = the changed text.
+- DELETE:  span = the EXACT, COMPLETE text to strike; new_text = "" (empty string). For positions that say use "Intentionally Deleted" to preserve numbering, new_text = "Intentionally Deleted." (not empty).
+- INSERT:  span = a SHORT, distinctive verbatim sentence that the new text should follow; new_text = that same span sentence + the inserted language appended.
+
+SPAN-LENGTH DISCIPLINE (this prevents failures):
+- For REPLACE and INSERT: make "span" the SHORTEST distinctive substring that uniquely locates the spot. Do NOT quote a whole long clause to anchor a small change. Five to fifteen distinctive words is usually enough.
+- For DELETE: "span" MUST be the complete text being struck, exactly as it appears — because the span defines the deletion boundary. A delete span is allowed to be long; a replace/insert span should not be.
+
 == YOUR TASK ==
-Decide for THIS section: FIGHT (apply rubric positions as tracked-change edits), LEAVE (no seller-protective edit warranted), or FLAG (a lawyer judgment call — deal-specific position, missing business number, party-identity blank, or unusual language the rubric is silent on).
+Decide for THIS section: FIGHT (emit edits), LEAVE (no seller-protective edit warranted), or FLAG (a lawyer judgment call — deal-specific position, business/economic term, party-identity blank, or unusual language the rubric is silent on).
 
 == OUTPUT FORMAT ==
-Respond with ONLY a single JSON object, no markdown fences, no preamble:
+Respond with ONLY a single JSON object, no markdown fences, no preamble, no prose before or after:
 {
   "decision": "FIGHT" | "LEAVE" | "FLAG",
   "edits": [
     {
-      "anchor": "<a short, verbatim, DISTINCTIVE substring copied exactly from the section text, used to locate the edit>",
-      "before": "<verbatim text to be replaced, copied EXACTLY from the section text>",
-      "after": "<the replacement text, in the firm's voice, preserving formatting/casing>",
-      "rubric_id": <integer rubric position id this edit implements, or null>,
-      "rationale": "<one sentence: what this does and why, seller-side>"
+      "span": "<verbatim text from the section>",
+      "new_text": "<what the span becomes; empty string for a pure deletion>",
+      "rubric_id": <integer rubric position id, or null>,
+      "rationale": "<ONE short sentence. Keep it brief.>"
     }
   ],
   "judgment_items": [
@@ -99,11 +137,11 @@ Respond with ONLY a single JSON object, no markdown fences, no preamble:
 
 RULES FOR OUTPUT:
 - For LEAVE: edits = [] and usually judgment_items = []. This is correct and common.
-- For a pure insertion (no text replaced), set "before" to a verbatim anchor sentence that the new text should follow, and put the FULL anchor+insertion in "after" (anchor sentence + new language), so the edit is unambiguous in Word.
-- "before" and "anchor" MUST be copied character-for-character from the section text. Do not paraphrase, do not fix typos in the anchor, do not normalize quotes.
-- Never invent business numbers, party names, dollar amounts, dates, or percentages. Those are judgment_items.
+- Keep rationales to one short sentence. Do not restate the section. Do not think out loud. Brevity protects the response from truncation.
+- "span" MUST be copied character-for-character from the section text. This is the single most important rule — a span not found verbatim cannot be applied.
+- Never invent business numbers, party names, dollar amounts, dates, or percentages. Those are judgment_items, never edits.
 - Preserve ALL CAPS where the rubric calls for conspicuous text. Preserve defined-term casing.
-- Apply at most the rubric positions that genuinely fire for this section. Most sections fire 0-2 positions.`;
+- Most sections fire 0-2 positions. Prefer few, surgical edits over many large ones.`;
 }
 
 function buildSubagentUserPrompt(
@@ -120,38 +158,40 @@ SECTION ${sectionId}:
 ${sectionText}
 """
 
-Produce your JSON decision for this section now.`;
+Produce your JSON decision for this section now. JSON only.`;
 }
 
 // ---------- response parsing ----------
-function extractJson(text: string): any {
-	// Strip markdown fences if the model added them despite instructions.
+function extractJson(text: string): ParsedSubagentResponse {
 	let t = text.trim();
 	if (t.startsWith("```")) {
 		t = t.replace(/^```(?:json)?\s*/i, "").replace(/```\s*$/i, "").trim();
 	}
-	// Find the outermost JSON object.
 	const first = t.indexOf("{");
 	const last = t.lastIndexOf("}");
 	if (first === -1 || last === -1) throw new Error("no JSON object found in subagent output");
-	return JSON.parse(t.slice(first, last + 1));
+	return JSON.parse(t.slice(first, last + 1)) as ParsedSubagentResponse;
 }
 
-// ---------- anchor validation ----------
-// An edit is only useful if its anchor actually appears in the section text.
-// We validate and tag each edit so the orchestrator knows what to trust.
-function validateEdits(edits: any[], sectionText: string): any[] {
+// ---------- edit validation ----------
+function classifyAndValidate(edits: unknown, sectionText: string): ValidatedEdit[] {
 	if (!Array.isArray(edits)) return [];
 	return edits.map((e) => {
-		const before = typeof e.before === "string" ? e.before : "";
-		const anchor = typeof e.anchor === "string" ? e.anchor : "";
-		const beforeFound = before.length > 0 && sectionText.includes(before);
-		const anchorFound = anchor.length > 0 && sectionText.includes(anchor);
+		const edit = e as RawEdit;
+		const span = typeof edit.span === "string" ? edit.span : "";
+		const newText = typeof edit.new_text === "string" ? edit.new_text : "";
+		const spanFound = span.length > 0 && sectionText.includes(span);
+		let op: ValidatedEdit["op"];
+		if (newText === "") op = "delete";
+		else if (span.length > 0 && newText.includes(span)) op = "insert";
+		else op = "replace";
 		return {
-			...e,
-			_anchor_valid: beforeFound || anchorFound,
-			_before_found: beforeFound,
-			_anchor_found: anchorFound,
+			span,
+			new_text: newText,
+			op,
+			rubric_id: edit.rubric_id ?? null,
+			rationale: typeof edit.rationale === "string" ? edit.rationale : "",
+			_span_valid: spanFound,
 		};
 	});
 }
@@ -159,11 +199,10 @@ function validateEdits(edits: any[], sectionText: string): any[] {
 export class MyMCP extends McpAgent<Env> {
 	server = new McpServer({
 		name: "PSA Redliner v2 (dev)",
-		version: "0.3.0",
+		version: "0.4.0",
 	});
 
 	async init() {
-		// ---------- diagnostic ----------
 		this.server.registerTool(
 			"ping_anthropic",
 			{
@@ -193,7 +232,7 @@ export class MyMCP extends McpAgent<Env> {
 						const errBody = await res.text();
 						return { content: [{ type: "text", text: `Anthropic API returned ${res.status}: ${errBody.slice(0, 500)}` }] };
 					}
-					const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
+					const data = (await res.json()) as AnthropicResponse;
 					const text = data.content?.find((b) => b.type === "text")?.text ?? "(no text block)";
 					return { content: [{ type: "text", text: `Anthropic responded: "${text}". API key works.` }] };
 				} catch (e) {
@@ -202,7 +241,6 @@ export class MyMCP extends McpAgent<Env> {
 			},
 		);
 
-		// ---------- start_run ----------
 		this.server.registerTool(
 			"start_run",
 			{
@@ -216,9 +254,7 @@ export class MyMCP extends McpAgent<Env> {
 			},
 			async ({ side, attorney, asset_pack, deal_summary }) => {
 				if (side !== "seller") {
-					return {
-						content: [{ type: "text", text: JSON.stringify({ ok: false, error: "This server is seller-side only in Phase 3a." }) }],
-					};
+					return { content: [{ type: "text", text: JSON.stringify({ ok: false, error: "This server is seller-side only." }) }] };
 				}
 				const runId = `run_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
 				return {
@@ -232,11 +268,10 @@ export class MyMCP extends McpAgent<Env> {
 			},
 		);
 
-		// ---------- process_section (the real one) ----------
 		this.server.registerTool(
 			"process_section",
 			{
-				description: "Process one section of a seller-side Texas PSA. Runs a focused subagent over the firm rubric/policy/prefs and returns a decision (FIGHT/LEAVE/FLAG), tracked-change edits, and judgment_items. Edits are validated against the section text; check _anchor_valid before applying.",
+				description: "Process one section of a seller-side Texas PSA. Returns a decision (FIGHT/LEAVE/FLAG) plus edits. Each edit is a uniform { span, new_text } pair: span is verbatim doc text, new_text is what it becomes (empty = delete, span-included = insert, otherwise replace). The 'op' field is classified for convenience. Apply only edits where _span_valid is true; for _span_valid=false or ok=false, record a judgment item and move on — NEVER author the edit yourself.",
 				inputSchema: {
 					run_id: z.string(),
 					section_id: z.string(),
@@ -250,10 +285,10 @@ export class MyMCP extends McpAgent<Env> {
 			async ({ run_id, section_id, section_text, side, attorney, asset_pack, deal_summary }) => {
 				const apiKey = this.env.ANTHROPIC_API_KEY;
 				if (!apiKey) {
-					return { content: [{ type: "text", text: JSON.stringify({ ok: false, error: "ANTHROPIC_API_KEY not set" }) }] };
+					return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: "ANTHROPIC_API_KEY not set" }) }] };
 				}
 				if (side !== "seller") {
-					return { content: [{ type: "text", text: JSON.stringify({ ok: false, error: "seller-side only" }) }] };
+					return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: "seller-side only" }) }] };
 				}
 
 				const system = buildSubagentSystemPrompt(attorney);
@@ -269,7 +304,7 @@ export class MyMCP extends McpAgent<Env> {
 						},
 						body: JSON.stringify({
 							model: SUBAGENT_MODEL,
-							max_tokens: 4000,
+							max_tokens: SUBAGENT_MAX_TOKENS,
 							system,
 							messages: [{ role: "user", content: user }],
 						}),
@@ -280,32 +315,43 @@ export class MyMCP extends McpAgent<Env> {
 						return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: `subagent API ${res.status}`, detail: errBody.slice(0, 400) }) }] };
 					}
 
-					const data = (await res.json()) as { content?: Array<{ type: string; text?: string }> };
+					const data = (await res.json()) as AnthropicResponse;
+
+					if (data.stop_reason === "max_tokens") {
+						return { content: [{ type: "text", text: JSON.stringify({
+							ok: false, run_id, section_id, error: "truncated",
+							detail: "Subagent hit max_tokens; response incomplete. Flag this section for manual review.",
+							output_tokens: data.usage?.output_tokens ?? null,
+						}) }] };
+					}
+
 					const rawText = data.content?.filter((b) => b.type === "text").map((b) => b.text).join("\n") ?? "";
 
-					let parsed: any;
+					let parsed: ParsedSubagentResponse;
 					try {
 						parsed = extractJson(rawText);
 					} catch (e) {
-						return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: "subagent returned unparseable output", raw: rawText.slice(0, 600) }) }] };
+						return { content: [{ type: "text", text: JSON.stringify({ ok: false, run_id, section_id, error: "unparseable", raw: rawText.slice(0, 600) }) }] };
 					}
 
-					const validatedEdits = validateEdits(parsed.edits ?? [], section_text);
-					const anchorProblems = validatedEdits.filter((e) => !e._anchor_valid).length;
+					const edits = classifyAndValidate(parsed.edits ?? [], section_text);
+					const spanProblems = edits.filter((e) => !e._span_valid).length;
 
 					const result = {
 						ok: true,
 						run_id,
 						section_id,
 						decision: parsed.decision ?? "LEAVE",
-						edits: validatedEdits,
-						judgment_items: Array.isArray(parsed.judgment_items)
-							? parsed.judgment_items.map((j: any) => ({ section_id, ...j }))
+						edits,
+							judgment_items: Array.isArray(parsed.judgment_items)
+								? parsed.judgment_items.map((j: Record<string, unknown>) => ({ section_id, ...j }))
 							: [],
 						_meta: {
 							model: SUBAGENT_MODEL,
-							edit_count: validatedEdits.length,
-							anchor_problems: anchorProblems,
+							edit_count: edits.length,
+							span_problems: spanProblems,
+							stop_reason: data.stop_reason ?? null,
+							output_tokens: data.usage?.output_tokens ?? null,
 							section_chars: section_text.length,
 						},
 					};
@@ -316,7 +362,6 @@ export class MyMCP extends McpAgent<Env> {
 			},
 		);
 
-		// ---------- finalize_run ----------
 		this.server.registerTool(
 			"finalize_run",
 			{
