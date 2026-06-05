@@ -1,0 +1,911 @@
+{
+  "side": "seller",
+  "source": "Rubric_SELLER (6).docx",
+  "_cleanup_meta": {
+    "produced_by": "RUBRIC cleanup pass (mechanical, non-substantive)",
+    "based_on": "get_rubric({side:'seller'}) + PSA_STRIP_MANIFEST.json",
+    "assertion": "No position deleted. position#34 MOVED positions->leave_alone. All other changes are added tags/flags only.",
+    "note": "Original rubric has 45 positions with IDs 1-46 (id 37 absent in source). After moving #34 out, positions array holds 44 entries; leave_alone grows from 17 to 21 (1 moved + 3 added operative-core)."
+  },
+  "positions": [
+    {
+      "id": 1,
+      "topic": "Notices",
+      "rule": "Add the attorney's copy-to under Seller's notice address. On seller side: HARD COPY (full firm block + Attn + address). Rob's house rule: do NOT include email on seller contracts on first pass — try to make it harder for buyer. Add email later if buyer asks. Use the attorney named in intake Q0.",
+      "applies_when": "Every deal.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "contradiction_with": "leave_alone#5",
+      "contradiction_note": "Position#1 withholds email and adds firm copy-to as the ONLY permitted notice edit; leave_alone#5 says notice delivery mechanics are market-standard, do-not-redline. They must be read together: the single carve-out from leave_alone#5 is the Position#1 firm copy-to (no other notice-mechanic edits)."
+    },
+    {
+      "id": 2,
+      "topic": "Reps — knowledge qualifier",
+      "rule": "Tie Seller's knowledge to a single named individual; strip imputation. Verbatim tail: \"without duty of inquiry or the imputation of knowledge from any other party or source.\" ALSO add anti-sandbagging language: if Buyer knows something before DD ends, cannot use it later as a claim; if Buyer closes knowing something, cannot make a claim for it after closing.",
+      "applies_when": "The draft's knowledge qualifier is broad (\"Seller's knowledge,\" no named individual, no duty-of-inquiry limit).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "misapplication_guard": "Only fires when the qualifier is BROAD (no named individual / no duty-of-inquiry limit). Do NOT re-fire where Seller's knowledge is already tied to a named individual with a duty-of-inquiry limit — that is already compliant; re-applying would mass-restate. Use only ONE named individual; do not import a deal-specific name (e.g. Jonathan Seaton / Leela Kaza) from corpus."
+    },
+    {
+      "id": 3,
+      "topic": "Reps — survival",
+      "rule": "On Pivnick's seller form (which has no survival), keep no-survival language: \"As of the Effective Date and as of Closing, but not surviving Closing.\" When responding to a buyer-provided form with survival, drop it to 90-180 days on first pass (market is 6-12 months). Include anti-sandbagging + materiality scrape.",
+      "applies_when": "The draft has Seller's representations surviving Closing (a buyer-form default).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "misapplication_guard": "Two-branch rule, pick the branch by draft posture. On Pivnick's OWN seller form (no survival), KEEP no-survival language — do NOT add a survival tail. Only DROP-to-90-180-days when responding to a buyer-provided form that AFFIRMATIVELY has survival. Do not add a survival period where none exists; do not delete-and-reinsert identical no-survival text."
+    },
+    {
+      "id": 4,
+      "topic": "Reps — scope",
+      "rule": "Where Seller has to give a property-touching rep, prefix it with \"Seller has not received any written notice of…\" — notice-only reps. In an as-is sale, STRIKE all reps Buyer puts in the form — but use \"Intentionally Deleted\" instead of deleting outright (preserves numbering).",
+      "applies_when": "A property-touching rep is flat or absolute (no knowledge/notice qualifier).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "misapplication_guard": "Do NOT mass-strike reps on a loose / inferred as-is read. The full strike-all-reps branch fires ONLY in a genuine as-is sale (confirmed by an actual AS-IS block / Position#5 trigger), and even then via \"Intentionally Deleted\" (preserve numbering), never outright deletion. Absent a real as-is posture, limit to the narrower fix: prefix property-touching reps with the notice-only qualifier. Do not strike reps Buyer did not put in the form."
+    },
+    {
+      "id": 5,
+      "topic": "AS IS",
+      "rule": "When Seller has NO construction work in the deal: insert the full ALL CAPS AS IS block, DTPA waiver under Tex. Bus. & Com. Code §17.41, and federal environmental statute laundry list (CERCLA, RCRA, etc.). IF the deal is NOT in Texas, use the more general language from Pivnick's seller-side form PSA — not the Texas-specific block.",
+      "applies_when": "Seller has NO construction work in the deal (no Seller's Work, no Exhibit D workletter).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 6,
+      "topic": "Remedies — strip \"any and all remedies\" language",
+      "rule": "If draft gives Buyer \"any and all remedies at law or in equity\" on Seller default, delete the broad language and restructure into a sole-remedy framework. Add a 60-day filing deadline on any specific-performance right: \"(an action for which must be filed within sixty (60) days failing which Purchaser shall be deemed to have waived the same).\"",
+      "applies_when": "The draft gives Buyer \"any and all remedies at law or in equity\" on Seller default.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "sourcing": {
+        "status": "SOURCED",
+        "supporting_cluster_id": "CL_seller_liability_cap",
+        "recurrence": 4,
+        "classification": "common",
+        "sourcing_note": "Catalog CL_seller_liability_cap (recurrence 4: cfa_zarzamora, cxn_ridglea, rise_120, tcc_robertson) example_clause carries the exact 60-day filing-deadline verbatim ('an action for which must be filed within 60 days failing which Purchaser shall be deemed to have waived the same'). Day-count now corpus-supported."
+      }
+    },
+    {
+      "id": 7,
+      "topic": "Remedies — cap on Buyer's out-of-pocket recovery",
+      "rule": "FIRST PASS: STRIKE the Buyer-out-of-pocket recovery language entirely (don't engage on a cap — just remove). Negotiate later. Don't accept a $50K cap on first pass — that's a fallback, not an opening position.",
+      "applies_when": "The draft exposes Seller to Buyer's out-of-pocket costs on Seller default.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 8,
+      "topic": "Remedies — preserve surviving indemnities on termination",
+      "rule": "Insert the surviving-indemnities carve-out inside termination-rights clause: \"excepting any indemnities specifically surviving such termination.\" This should ONLY reach Buyer indemnities (diligence/inspection activities) — Seller should not have surviving indemnities.",
+      "applies_when": "The draft's termination clause does not carve out surviving indemnities, so they would get wiped out when the contract is terminated.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false,
+      "misapplication_guard": "The carve-out reaches BUYER indemnities ONLY (diligence/inspection activities). Do NOT draft or preserve a SURVIVING SELLER indemnity — Seller should have no surviving indemnities. If the clause would let a Seller indemnity survive, that is out of scope for this position."
+    },
+    {
+      "id": 9,
+      "topic": "Title — Seller silence deemed decline",
+      "rule": "Install Title cure timeline: Seller has 10 days to respond to Buyer's objections; Seller silence = deemed declination to cure. Buyer then has 10 days to terminate; Buyer silence = deemed waiver. Add: any Seller election to cure must be a formal letter on letterhead (avoid argument that random email = agreement to cure).",
+      "applies_when": "The draft's title mechanic defaults buyer-favorable (e.g., Seller silence = deemed cure, or Buyer silence = waiver of objection).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Will Bassham"
+      ],
+      "skip": false
+    },
+    {
+      "id": 10,
+      "topic": "Title — gap coverage",
+      "rule": "Replace title-company-drafted gap indemnity with the standard \"so-called 'gap affidavit'.\"",
+      "applies_when": "The draft requires Seller to execute a title-company-drafted indemnity agreement for gap coverage.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "contradiction_with": 39,
+      "contradiction_note": "Position#10 (title gap affidavit) is unrelated in substance to prorations; the actual proration contradiction is leave_alone#10 (prorations are do-not-redline, symmetric) vs Position#39 (NNN deals: strike tax proration, delinquent-rent/pass-through proration, credit security deposits). On a single-tenant NNN deal where tenant pays directly, Position#39 OVERRIDES leave_alone#10 for those specific proration lines; leave_alone#10 governs all other deals.",
+      "sourcing": {
+        "status": "SOURCED",
+        "supporting_cluster_id": "CL_gap_affidavit_narrowing",
+        "recurrence": 4,
+        "classification": "common",
+        "sourcing_note": "Catalog CL_gap_affidavit_narrowing (recurrence 4: cfa_zarzamora, cxn_ridglea, rise_120, tcc_robertson) — 'a standard so-called \"gap affidavit\" in a form reasonably satisfactory to the Title Company'. Swap is firm-standard practice."
+      }
+    },
+    {
+      "id": 11,
+      "topic": "Inspection Period — strip day-for-day extension",
+      "rule": "If draft has day-for-day Inspection Period tolling for late Seller deliveries, STRIKE it. Inspection Period runs from Effective Date regardless of Seller delivery timing. (Rob's note: buyers usually don't include this — we're the rare breed.)",
+      "applies_when": "The draft has day-for-day tolling of the Inspection Period for late Seller deliveries (i.e., every day Seller is late adds a day to the Inspection Period).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 12,
+      "topic": "Inspection Period — no duty to create",
+      "rule": "If the diligence list is open-ended, scope Seller's delivery obligation to documents already in Seller's possession AND carve out privileged or proprietary documents. Verbatim: \"but only if such documents exist and are currently in Seller's possession\" + privileged/proprietary carve-out.",
+      "applies_when": "The draft's diligence list is open-ended (Seller owes whatever Buyer asks for).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 13,
+      "topic": "Inspection Period — Buyer indemnity fair-notice",
+      "rule": "When Buyer is doing physical inspection and the indemnity is narrow, expand Buyer's indemnity in ALL CAPS to reach Seller's own negligence and strict liability: \"WHETHER ARISING WHOLLY OR IN PART FROM THE NEGLIGENCE OR STRICT LIABILITY OF SELLER.\" Add COI requirement (each vendor, not just Buyer). NOTE: this is aggressive — if Buyer has already carved this out, do NOT strike the carve-out (we'll concede).",
+      "applies_when": "The draft has a narrow Buyer indemnity that doesn't reach Seller's own negligence. Buyer is doing physical inspection.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "misapplication_guard": "Do NOT re-fire the ALL-CAPS negligence/strict-liability expansion where Buyer has ALREADY carved this out — that is a conceded point. Only expand a genuinely narrow indemnity. Trim scope to the rubric#13 narrow floor; do not stack \"in whole or in part\" beyond the stated verbatim. Requires actual physical inspection by Buyer."
+    },
+    {
+      "id": 14,
+      "topic": "Force Majeure",
+      "rule": "If Buyer adds Force Majeure to the PSA, STRIKE IT ALTOGETHER — FM has no place in PSAs (concept belongs in leases). Don't engage on a financial-incapacity carve-out; just remove the whole FM clause.",
+      "applies_when": "The draft's Force Majeure clause lacks a financial-incapacity carve-out, or it lets Force Majeure toll monetary-payment obligations.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 15,
+      "topic": "Earnest Money",
+      "rule": "Flip to seller-form Earnest Money structure: single-lump deposit, non-interest-bearing, $200 Independent Consideration, self-executing termination if Buyer fails to fund within 3 business days. (Two-tier is deal-specific — never default to it.)",
+      "applies_when": "The draft has the buyer-form Earnest Money structure: two-tier deposit, interest-bearing to Buyer, $100 Independent Consideration.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 16,
+      "topic": "Brokers",
+      "rule": "Add the closes-or-nothing broker qualifier verbatim: \"if and only if the transaction closes but not otherwise.\"",
+      "applies_when": "The draft has a Seller broker commission obligation without the closes-or-nothing qualifier.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "sourcing": {
+        "status": "SOURCED",
+        "supporting_cluster_id": "CL_leasing_costs_seller_pays",
+        "recurrence": 2,
+        "classification": "common",
+        "sourcing_note": "Brokers-topic firm practice: catalog CL_leasing_costs_seller_pays (recurrence 2: aliana_retail, lake_vista) plus the closes-or-nothing verbatim codified in insert seller-proform-brokers-commission-on-closing-only ('if and only if the transaction closes but not otherwise'). Recurrence>=2 on the brokers topic. NOTE: cluster is leasing-costs-adjacent, not an exact closes-or-nothing cluster, but the verbatim is firm-form codified."
+      }
+    },
+    {
+      "id": 17,
+      "topic": "1031 Exchange",
+      "rule": "If draft has 1031 cooperation clause missing any of three qualifiers, insert the missing one(s): (i) no additional cost or liability to non-exchanging party; (ii) Agreement not modified; (iii) non-exchanging party not required to hold title to other property. If all three already present, leave alone.",
+      "applies_when": "The draft has a 1031 cooperation clause missing any of these three qualifiers: (i) no additional cost or liability to the non-exchanging party, (ii) Agreement not modified or amended, (iii) non-exchanging party not required to hold title to any other property.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "needs_team_verification": true,
+      "verification_note": "Unsourced (marked_by empty); the three-qualifier 1031 logic has no attribution — confirm with the team. (Mirrors leave_alone#14, which says leave the clause alone when all three are already present.)",
+      "sourcing": {
+        "status": "no_corpus_support — confirm or drop",
+        "checked_cluster_id": null,
+        "max_recurrence_found": 1,
+        "sourcing_note": "confirm or drop — no catalog cluster supports the 1031 three-qualifier logic (recurrence<2). Insert seller-proform-1031-exchange-cooperation itself states 'No dedicated catalog cluster (boilerplate cooperation provision)'. Genuinely unknowable from corpus; rubric codification is the only support. Surface to team."
+      }
+    },
+    {
+      "id": 18,
+      "topic": "Casualty",
+      "rule": "If draft gives Buyer unqualified casualty termination, insert a dollar materiality threshold + 10-business-day deemed-acceptance window after Seller's notice.",
+      "applies_when": "The draft gives Buyer an unqualified termination right on casualty (no materiality floor, no deemed acceptance).",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "sourcing": {
+        "status": "SOURCED",
+        "supporting_cluster_id": "CL_casualty_material_threshold",
+        "recurrence": 3,
+        "classification": "common",
+        "sourcing_note": "Catalog CL_casualty_material_threshold (recurrence 3: cxn_ridglea, gillespie, lake_vista) supports a materiality threshold; insert seller-proform-casualty-condemnation-mechanic supplies the deemed-acceptance window ('earlier of five (5) business days after receipt of Seller's notice or the Closing Date'). Mechanic sourced; the specific DOLLAR threshold remains parcel-specific (do not import a corpus literal)."
+      }
+    },
+    {
+      "id": 19,
+      "topic": "Consequential damages waiver — standalone",
+      "rule": "Break consequential-damages waiver out as a standalone sentence: \"Neither party shall ever be liable for consequential, special, punitive or exemplary damages.\" Do NOT fight Buyer's carve-out for fraud, intentional misrepresentation, or where specific performance is unavailable — concede.",
+      "applies_when": "The consequential-damages waiver is fused into casualty language (\"Casualty and consequential damages…\") instead of standing on its own.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false,
+      "misapplication_guard": "Do NOT fight Buyer's carve-out for fraud, intentional misrepresentation, or where specific performance is unavailable — these are conceded; leave them in place. The position is limited to BREAKING THE WAIVER OUT as a standalone sentence; it is not a license to delete Buyer's permitted carve-outs."
+    },
+    {
+      "id": 20,
+      "topic": "Assignment",
+      "rule": "Strip free-assignment language. Require Seller's prior written consent in sole and absolute discretion FOR NON-AFFILIATED BUYER PARTIES ONLY. Affiliate transfers are OK so long as Buyer stays on the hook. No release of Buyer. Add reliance recital on Buyer's identity and creditworthiness.",
+      "applies_when": "The draft allows free assignment or has affiliate/estate-planning carve-outs from Seller's consent.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 21,
+      "topic": "Permitting Period — 45-day Seller cure",
+      "rule": "DEAL-SPECIFIC: When the deal has a permitting period with Buyer termination rights, insert a 45-day Seller cure window before Buyer can terminate for a permits failure. Concept: if Buyer wants to terminate, Seller gets a bite at the apple first.",
+      "applies_when": "The deal has a permitting period with Buyer termination rights.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 22,
+      "topic": "Signature block — Authorized Signatory",
+      "rule": "Replace Seller signature-block title (\"Manager\" / \"Managing Member\" / \"President\") with \"Authorized Signatory\" — keeps alter-ego / LLC-veil protections clean. Rob applies this on everything. Do NOT apply to Title Company's own signature block.",
+      "applies_when": "The Seller signature block has \"Manager\" / \"Managing Member\" / \"President\" as the title.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 23,
+      "topic": "Effective Date — Title Company deposit convention",
+      "rule": "On SELLER side, Effective Date = the last date signed by Buyer or Seller (NOT Title Company deposit — that convention is for BUYER side, where it buys an extra day). Use last-signature convention here.",
+      "applies_when": "The draft uses the buyer-form \"last party to sign\" convention for the Effective Date.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 24,
+      "topic": "Confidentiality",
+      "rule": "Make confidentiality mutual. Add a disclaimer that Seller makes no representations about completeness or accuracy of Site Information delivered. On return: originals returned; copies deleted or destroyed (Will's simpler approach).",
+      "applies_when": "The confidentiality clause is one-sided (Seller is burdened, Buyer is not), or it has no disclaimer on the completeness of the Site Information Seller delivers.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Will Bassham"
+      ],
+      "skip": false
+    },
+    {
+      "id": 25,
+      "topic": "No Recordation",
+      "rule": "Insert a No Recordation section: prohibit Buyer from recording a memorandum of the PSA against title. Self-help via limited power of attorney if Buyer breaches. Apply every deal.",
+      "applies_when": "Every deal.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "sourcing": {
+        "status": "SOURCED",
+        "supporting_cluster_id": "CL_no_recordation",
+        "recurrence": 2,
+        "classification": "common",
+        "sourcing_note": "Catalog CL_no_recordation (recurrence 2: cfa_zarzamora, siteone_prestige) — 'No Recordation ... grants to Seller a limited power of attorney for such purpose,' self-help expungement surviving termination. POA self-help mechanic is corpus-supported."
+      }
+    },
+    {
+      "id": 26,
+      "topic": "Texas Statutory Disclosures (Schedule 27.1)",
+      "rule": "TEAM DISAGREEMENT — flag in cover memo: Rob's view is Schedule 27.1 statutory notices (annexation §5.011, PID §5.014, private transfer fee §5.205, water district §49.452, storage tanks, rollback taxes) are RAW-LAND ONLY. Jordan's view is they apply to developed and operating properties too. Default: add only the notices that are specifically triggered for the parcel; ASK in cover memo when the parcel type is mixed.",
+      "applies_when": "Every Texas seller-side deal (specific notices triggered by the parcel).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "disposition": "FLAG",
+      "flag_note": "LIVE Rob-vs-Jordan TEAM DISAGREEMENT on scope (raw-land-only vs developed/operating too). Never auto-apply the full Schedule 27.1 suite. Route to the attorney via cover memo: add only parcel-triggered notices, and ASK when the parcel type is mixed. The matching insert (seller-proform-texas-statutory-notices-exhibit-b) embeds factual reps — do not auto-insert."
+    },
+    {
+      "id": 27,
+      "topic": "Alter Ego / SPE protection",
+      "rule": "When Seller is a special-purpose entity (SPE) or subsidiary with affiliates, officers, or managers to insulate, insert an Alter Ego / SPE protection section: alter-ego waiver + affiliate protection + fee-shifting if a derivative claim is asserted. Cap recourse to the Seller entity; for pre-Closing matters, cap recourse to sale proceeds.",
+      "applies_when": "Seller is a special-purpose entity (SPE) or subsidiary with affiliates, officers, or managers we want to insulate from derivative claims.",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "needs_team_verification": true,
+      "verification_note": "Unsourced (marked_by empty); this is a full Alter-Ego/SPE Article (alter-ego waiver + affiliate protection + fee-shift + recourse/proceeds cap) with no attribution — high impact. Confirm the Article and the recourse caps with the team before relying.",
+      "sourcing": {
+        "status": "no_corpus_support — confirm or drop",
+        "checked_cluster_id": "CL_alter_ego_nonrecourse",
+        "max_recurrence_found": 1,
+        "sourcing_note": "confirm or drop — CL_alter_ego_nonrecourse appears in only ONE deal (cfa_zarzamora), recurrence 1 < 2. Does not meet the recurrence>=2 bar. The full Alter-Ego/SPE Article + recourse/proceeds caps remain unverified against firm practice. Surface to team."
+      }
+    },
+    {
+      "id": 28,
+      "topic": "Declaration Estoppels — preserve Seller's three-qualifier fallback",
+      "rule": "NEVER offer this up on initial draft (not in Pivnick's form). Only insert if Buyer adds Declaration Estoppels — then preserve the three-qualifier fallback: commercially reasonable efforts + no non-de-minimis expense + Seller-certification fallback if third parties won't sign.",
+      "applies_when": "Seller owns adjacent property bound by a Reciprocal Easement Agreement (REA) or declaration, AND the draft has a Declaration Estoppel delivery obligation.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 29,
+      "topic": "REA execution at Closing (adjacent property)",
+      "rule": "DEAL-SPECIFIC: Don't add REA execution as a closing condition automatically. Only when Seller owns adjacent property and the REA needs to be executed at/before Closing. Buyer approves the form during Inspection Period, not at Closing table.",
+      "applies_when": "Seller owns adjacent property AND the REA needs to be executed at or before Closing.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 30,
+      "topic": "Financing contingency — Seller pushback",
+      "rule": "DEAL-SPECIFIC: Don't add financing-contingency pushback automatically. If applicable, narrow the contingency: define loan parameters (LTV, rate, amortization) so Buyer cannot terminate for failure to obtain a loan outside stated terms. Require application payment / submission critical path. Flag for live discussion.",
+      "applies_when": "The opposing draft contains a financing contingency giving Buyer the right to terminate (with EM refund) if Buyer cannot obtain a loan.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "contradiction_with": 42,
+      "contradiction_note": "Position#30 (narrow-and-discuss the financing contingency, deal-specific, flag for live discussion) directly conflicts with Position#42 (hard-lock all-cash by inserting a no-financing-contingency carve under §4.1). Do NOT layer both on the same clause. Pick ONE posture per deal: if the deal genuinely contemplates buyer financing, use #30 (narrow + flag); only use #42's hard all-cash carve when the deal is truly all-cash. See #42's reciprocal contradiction_with."
+    },
+    {
+      "id": 31,
+      "topic": "Repurchase option / reverter — control the recorded memorandum",
+      "rule": "DEAL-SPECIFIC: Rare — pops up on horizontal developer selling to vertical developer (pad sites) where Seller wants to ensure construction proceeds, or have the ability to buy back if construction not commenced by deadline. When applicable: preserve Seller's control over the recorded memorandum form; tie release of reverter to a specific construction-completion milestone (not Buyer's unilateral certification).",
+      "applies_when": "Buyer's draft includes a Seller repurchase option or reverter, AND gives Buyer the unilateral right to terminate the recorded memorandum once construction starts.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Jordan Bailey",
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 32,
+      "topic": "No-MAC closing condition — strike",
+      "rule": "Strike the no-MAC closing condition. But use \"Intentionally Deleted\" — DON'T delete the section number (preserves numbering). Seller does not accept a MAC condition on commercial PSA — Inspection Period is Buyer's window to find problems.",
+      "applies_when": "The opposing draft gives Buyer a no-material-adverse-change closing condition (Buyer can refuse to close if the property's physical, environmental, or financial condition has materially changed).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 33,
+      "topic": "Utilities — strip \"at Seller's expense\"",
+      "rule": "DEAL-SPECIFIC: When draft requires Seller to stub utilities \"at Seller's expense\" on raw-land, strike \"at Seller's expense.\" Where the price clearly wasn't negotiated to absorb utility-extension cost, also delete the entire utility-stubbing covenant.",
+      "applies_when": "The opposing draft requires Seller to stub utilities to the pad or boundary \"at Seller's expense\" on a raw-land deal, and the Purchase Price was not specifically set up to include that cost.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 35,
+      "topic": "Restore \"gross\" in gross-negligence carve-outs",
+      "rule": "If a gross-negligence carve-out has had \"gross\" deleted in the opposing draft, restore it as a tracked change. Texas market practice has the carve-out reach gross negligence, not ordinary negligence.",
+      "applies_when": "The opposing draft has deleted \"gross\" from a gross-negligence carve-out (in an indemnity, release, or waiver), leaving only \"negligence.\"",
+      "modified_by_team": false,
+      "deal_specific": false,
+      "marked_by": [],
+      "skip": false,
+      "needs_team_verification": true,
+      "verification_note": "Unsourced (marked_by empty); the restore-\"gross\" rule has no attribution (low stakes) — confirm with the team. Only fires where the opposing draft actually DELETED \"gross,\" leaving bare \"negligence.\"",
+      "sourcing": {
+        "status": "no_corpus_support — confirm or drop",
+        "checked_cluster_id": null,
+        "max_recurrence_found": 0,
+        "sourcing_note": "confirm or drop — no catalog cluster restores or even addresses 'gross' in gross-negligence carve-outs (recurrence<2; no matching cluster). Low stakes but genuinely unsourced. Surface to team."
+      }
+    },
+    {
+      "id": 36,
+      "topic": "Third-party ROFR on the Property",
+      "rule": "Strip any Buyer-side \"Inspection Period shall not commence until ROFR waiver is received\" tolling. Seller's obligation is limited to notifying the ROFR holder — Seller is not liable if the holder fails to waive. Rob: \"Tough sell, but OK.\" Push it.",
+      "applies_when": "The property is subject to a third-party right of first refusal (e.g., from a neighboring owner, a prior seller, or an REA party).",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 38,
+      "topic": "HOA / POA — resist Association financial reps",
+      "rule": "Strike the HOA / POA financial-reps requirement (use \"Intentionally Deleted\" — preserve numbering). Seller doesn't stand behind HOA finances or governance.",
+      "applies_when": "The opposing draft requires Seller to rep on the HOA or POA's financial condition, special-assessment history, or architectural-review status.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 39,
+      "topic": "Tenanted / NNN deal — proration handling",
+      "rule": "On NNN deals where tenant pays directly: strike tax proration (tenant pays — nothing to apportion), strike proration of delinquent rent and pass-throughs, credit security deposits against Purchase Price. Distinguish single-tenant from multi-tenant — apply only on single-tenant NNN with tenant actually paying directly.",
+      "applies_when": "The property is income-producing with NNN leases (tenant pays taxes, insurance, CAM directly).",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false,
+      "contradiction_with": "leave_alone#10",
+      "contradiction_note": "Position#39 (strike tax proration, delinquent-rent/pass-through proration, credit security deposits) contradicts leave_alone#10 (prorations are market-standard, symmetric, do-not-redline). Resolution: #39 OVERRIDES leave_alone#10 for those specific proration lines, but ONLY on a single-tenant NNN deal where the tenant actually pays directly. On every other deal, leave_alone#10 governs — leave prorations alone.",
+      "_cleanup_change": "deal_specific flipped false->true per instruction (f): NNN proration handling is gated on a single-tenant NNN posture, which is deal-specific."
+    },
+    {
+      "id": 40,
+      "topic": "Lease-termination requirement — narrow",
+      "rule": "DEAL-SPECIFIC, flag for live discussion: when Buyer's draft requires Seller to terminate existing leases before Closing with Buyer self-help, narrow the termination obligation to named leases only (no blanket \"all leases\"), strip Buyer's self-help credit against Purchase Price, cap Seller's cost exposure.",
+      "applies_when": "The opposing draft requires Seller to terminate existing leases before Closing, with Buyer self-help rights if Seller fails.",
+      "modified_by_team": true,
+      "deal_specific": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "skip": false
+    },
+    {
+      "id": 41,
+      "topic": "Earnest Money — non-estate-property recital (§3.3)",
+      "rule": "Add a Buyer Acknowledgement subsection stating the Earnest Money does not constitute property of Buyer's estate under §541 of Title 11 U.S. Code or substantially similar state law. Standard pro-seller bankruptcy-protection recital.",
+      "applies_when": "The draft does not contain a Buyer acknowledgement that the Earnest Money is not estate property.",
+      "verbatim": "seller-buyer-ack-non-estate-property",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false,
+      "insert_reconcile": {
+        "status": "INSERT_RESTORED — verbatim-backed",
+        "insert_id": "seller-buyer-ack-non-estate-property",
+        "supporting_cluster_id": "CL_bankruptcy_safe_harbor_ack",
+        "cluster_recurrence": 1,
+        "resolution": "Rubric-primacy correction: an insert that BACKS a rubric position is firm-standard by the RUBRIC regardless of corpus recurrence. Insert restored to inserts_library_CLEAN.json (recurrence_support: rubric-backed (#41/#42/#43)). Position drafts from the verbatim insert seller-buyer-ack-non-estate-property."
+      },
+      "verbatim_status": "AVAILABLE"
+    },
+    {
+      "id": 42,
+      "topic": "Financing — No Financing Contingency carve (§4.1)",
+      "rule": "Insert a new subsection (c) under §4.1 stating Buyer's obligations are not conditioned on Buyer's ability to obtain financing. Hard-locks the deal as all-cash from Seller's perspective.",
+      "applies_when": "The draft does not contain an express no-financing-contingency recital under §4.1 or Purchase Price provisions.",
+      "verbatim": "seller-no-financing-contingency",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false,
+      "contradiction_with": 30,
+      "contradiction_note": "Position#42 hard-locks all-cash (no-financing-contingency carve under §4.1) and conflicts with Position#30 (narrow-and-discuss the buyer financing contingency, flag for live discussion). Do NOT apply both on the same clause. Pick ONE posture: use #42 only when the deal is truly all-cash; if the deal contemplates buyer financing, defer to #30 (narrow + flag) instead of hard-locking.",
+      "insert_reconcile": {
+        "status": "INSERT_RESTORED — verbatim-backed",
+        "insert_id": "seller-no-financing-contingency",
+        "supporting_cluster_id": "CL_no_financing_contingency",
+        "cluster_recurrence": 1,
+        "resolution": "Rubric-primacy correction: an insert that BACKS a rubric position is firm-standard by the RUBRIC regardless of corpus recurrence. Insert restored to inserts_library_CLEAN.json (recurrence_support: rubric-backed (#41/#42/#43)). Position drafts from the verbatim insert seller-no-financing-contingency."
+      },
+      "verbatim_status": "AVAILABLE"
+    },
+    {
+      "id": 43,
+      "topic": "Title — Seller-can-convey fallback (§7.3)",
+      "rule": "Add a 'Title as Seller Can Convey' subsection (typically §7.3(d) or a new tail subsection): Buyer may at any time accept such title as Seller can convey, without reduction in Purchase Price, credit, or claim. Acceptance of the Deed is a waiver of unsatisfied Permitted Exceptions.",
+      "applies_when": "The draft's title cure mechanic does not include a Seller-can-convey fallback for the Buyer.",
+      "verbatim": "seller-title-as-seller-can-convey-fallback",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false,
+      "insert_reconcile": {
+        "status": "INSERT_RESTORED — verbatim-backed",
+        "insert_id": "seller-title-as-seller-can-convey-fallback",
+        "supporting_cluster_id": "CL_title_as_seller_can_convey",
+        "cluster_recurrence": 1,
+        "resolution": "Rubric-primacy correction: an insert that BACKS a rubric position is firm-standard by the RUBRIC regardless of corpus recurrence. Insert restored to inserts_library_CLEAN.json (recurrence_support: rubric-backed (#41/#42/#43)). Position drafts from the verbatim insert seller-title-as-seller-can-convey-fallback."
+      },
+      "verbatim_status": "AVAILABLE"
+    },
+    {
+      "id": 44,
+      "topic": "Buyer Conditions tightening (§12)",
+      "rule": "Tighten Buyer's Conditions: (i) limit the rep-truth-and-correctness condition to Material Breach (or knowledge-qualified), (ii) recast title-policy condition as Title Company committed to issue (not Buyer received), (iii) cabin closing-deliverables condition to documents Seller is obligated to deliver under §17.1, (iv) clean failure-of-conditions cross-reference to (a), (b), (c).",
+      "applies_when": "The draft's §12 Buyer's Conditions are flat absolute or contain buyer-form-default mechanics (e.g., 'Buyer shall receive' instead of 'Title Company committed to issue').",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false
+    },
+    {
+      "id": 45,
+      "topic": "Seller Conditions cleanup (§13)",
+      "rule": "On §13 Seller's Conditions, anchor Buyer rep truth-and-correctness to Closing Date and add cross-reference cleanups: (i) Buyer reps must be true 'as if made on the Closing Date'; (ii) recast Buyer-performance clause to 'on or before the Closing Date'; (iii) tighten Buyer-deliverables to three numbered prongs (executed required documents; payment of full Purchase Price; payment of all other sums under the Agreement).",
+      "applies_when": "The draft's §13 Seller's Conditions has buyer-form-default flat phrasing.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false
+    },
+    {
+      "id": 46,
+      "topic": "Deliveries scrubbing (§17.1)",
+      "rule": "Walk §17.1(a)-(h) Seller's Deliverables and tighten: (a) fix exhibit cross-reference for Special Warranty Deed to the actual exhibit letter; (b) recast 'A' affidavit to 'One (1) original' for every numbered deliverable; (c) condition the General Assignment delivery on contracts/intangibles actually existing ('If there are any contracts or intangible property to be assigned…'); (d) tailor any deal-specific assignment (e.g., Ag Lease); (e) strip 'no-change affidavit' and survey-deletion language from the owner's affidavit. Use 'Intentionally Deleted' to preserve numbering when removing.",
+      "applies_when": "Every seller-side deal — §17.1 has a deliverables list.",
+      "modified_by_team": true,
+      "deal_specific": false,
+      "marked_by": [
+        "Jordan Bailey"
+      ],
+      "skip": false
+    }
+  ],
+  "leave_alone": [
+    {
+      "id": 1,
+      "item": "Severability clause",
+      "rule": "Do not redline severability clauses — market-standard, no Seller-protective edit available.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 2,
+      "item": "Counterparts / electronic signatures",
+      "rule": "Do not redline counterparts / electronic signatures — already enforceable under Texas UETA and federal ESIGN.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 3,
+      "item": "Governing law (Texas) + venue (Texas state court)",
+      "rule": "Do not change governing law (Texas) or venue (Texas state court) — deal is in Texas.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 4,
+      "item": "Mutual jury waiver (in bold or ALL CAPS)",
+      "rule": "Do not redline the mutual jury waiver (in bold or ALL CAPS) — enforceable under Texas law when conspicuous; bench trials favor sophisticated parties (usually Seller).",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 5,
+      "item": "Notice mechanics (how notices get delivered: hand, overnight, email, business hours)",
+      "rule": "Do not redline notice delivery mechanics — market-standard. Only edit is adding firm copy-to per Position Row 1.",
+      "modified_by_team": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ],
+      "contradiction_with": "position#1",
+      "contradiction_note": "leave_alone#5 (notice mechanics are do-not-redline) sits against Position#1 (withhold email on seller side + add firm copy-to). Resolution: the ONLY permitted notice edit is the Position#1 firm copy-to; do NOT touch any other delivery mechanic (hand/overnight/business-hours). Position#1's email-withholding is an edit to the notice ADDRESS block, not to the delivery-mechanics text leave_alone#5 protects."
+    },
+    {
+      "id": 6,
+      "item": "Merger / integration clause",
+      "rule": "Do not redline merger / integration clauses — standard and protective for both sides.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 7,
+      "item": "No-oral-waiver clause",
+      "rule": "Do not redline no-oral-waiver clauses — Seller-protective as drafted.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 8,
+      "item": "Recitals (the WHEREAS / NOW THEREFORE preamble)",
+      "rule": "Do not redline Recitals unless fixing factual errors (wrong party name, wrong property description).",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 9,
+      "item": "Exhibit A — Legal Description",
+      "rule": "Do not redline Exhibit A — Legal Description. Survey/title matter; title company catches errors.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 10,
+      "item": "Prorations and closing adjustments",
+      "rule": "Do not redline prorations and closing adjustments math — market-standard and symmetric.",
+      "modified_by_team": false,
+      "marked_by": [],
+      "contradiction_with": "position#39",
+      "contradiction_note": "leave_alone#10 (leave prorations alone) is overridden by Position#39 (NNN proration handling: strike tax proration, delinquent-rent/pass-through proration, credit security deposits) ONLY on a single-tenant NNN deal where the tenant pays directly. On all other deals, leave_alone#10 controls — do not redline prorations."
+    },
+    {
+      "id": 11,
+      "item": "Signature block order (Seller signs first)",
+      "rule": "Do not redline signature-block order (Seller signs first) unless the opposing draft flipped it. Cosmetic otherwise.",
+      "modified_by_team": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ]
+    },
+    {
+      "id": 12,
+      "item": "Environmental statute citations (CERCLA / RCRA / SARA / etc.) inside the \"Environmental Laws\" definition",
+      "rule": "Do not narrow environmental statute citations inside the \"Environmental Laws\" defined term — statute list gives the term its reach.",
+      "modified_by_team": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ]
+    },
+    {
+      "id": 13,
+      "item": "Environmental covenants when Seller's Work includes remediation",
+      "rule": "Do not redline Seller's Work environmental covenants when Seller's Work includes remediation — those are negotiated business terms, not boilerplate.",
+      "modified_by_team": true,
+      "marked_by": [
+        "Rob Pivnick"
+      ]
+    },
+    {
+      "id": 14,
+      "item": "1031 Exchange clause when all three qualifiers are already in the draft",
+      "rule": "Do not redline 1031 Exchange clause when all three qualifiers are already verbatim in the draft.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 15,
+      "item": "Exhibit and schedule numbering, headers, and formatting",
+      "rule": "Do not renumber exhibits/schedules or rework headers/formatting — breaks cross-references.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 16,
+      "item": "Order and structure of the Definitions section",
+      "rule": "Do not reorder defined terms or split them into sub-definitions — only edit definition substance when wording is directly harmful to Seller.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 17,
+      "item": "Title Company designation",
+      "rule": "Do not auto-insert a specific Title Company / escrow agent. Which title company the draft names is usually the client's preferred escrow agent. FLAG ONLY if the draft names a company the client has not approved. NEVER write a specific firm name verbatim.",
+      "modified_by_team": false,
+      "marked_by": []
+    },
+    {
+      "id": 18,
+      "item": "Property definition — minerals / water / air / riparian / solar rights",
+      "rule": "[LEAVE ALONE — TEAM CONSENSUS] Do NOT strip the expanded Property definition (minerals, water, air, riparian, solar) unless client has specifically told us otherwise. Rob + Will: \"probably OK leaving this alone.\"",
+      "modified_by_team": true,
+      "marked_by": [
+        "Rob Pivnick",
+        "Will Bassham"
+      ],
+      "_cleanup_change": "MOVED from positions[id=34] (which had skip=true) into leave_alone per instruction (a). It is a hard leave-alone (team consensus) that was mis-filed in the positions array, where an agent could fire it and strip mineral/water rights against team consensus. Substance unchanged; reframed as a leave-alone item.",
+      "_origin": "positions#34"
+    },
+    {
+      "id": 19,
+      "item": "§2 Sale-and-convey operative grant (\"Seller agrees to sell / Buyer agrees to purchase\")",
+      "rule": "[LEAVE ALONE — OPERATIVE CORE] Do NOT rephrase, restructure, or redline the §2 operative grant of sale (\"Seller agrees to sell and Buyer agrees to purchase the Property\"). This is the operative core of the contract; it is already mutual and symmetric and carries no Seller-protective edit. Touching it risks altering what is being conveyed.",
+      "modified_by_team": false,
+      "marked_by": [],
+      "_cleanup_change": "ADDED per instruction (b)(i): operative-core leave-alone, no new legal position invented."
+    },
+    {
+      "id": 20,
+      "item": "Earnest Money interest / structure OUTSIDE Position#15's buyer-form trigger",
+      "rule": "[LEAVE ALONE — unless Position#15 triggers] Do NOT edit Earnest Money interest treatment or deposit structure unless Position#15 actually fires (i.e., the draft has the buyer-form EM structure: two-tier deposit, interest-bearing to Buyer, $100 Independent Consideration). If the EM structure is already seller-form, or does not match Position#15's trigger, leave it alone — do not flip interest or restructure the deposit on a non-triggering clause.",
+      "modified_by_team": false,
+      "marked_by": [],
+      "_cleanup_change": "ADDED per instruction (b)(ii): scopes EM edits to Position#15's trigger only; no new legal position invented.",
+      "related_position": 15
+    },
+    {
+      "id": 21,
+      "item": "Global anti-restatement / no-op rule",
+      "rule": "[LEAVE ALONE — GLOBAL] NEVER delete-then-reinsert materially identical text. Do not produce a redline whose insertion is substantively the same as the text it strikes (no-op churn). If the existing language already satisfies the position, leave it alone rather than restating it. Applies across every position and every section.",
+      "modified_by_team": false,
+      "marked_by": [],
+      "_cleanup_change": "ADDED per instruction (b)(iii): global anti-restatement / no-op guard; no new legal position invented."
+    }
+  ],
+  "totals": {
+    "positions": 44,
+    "leave_alone": 21,
+    "positions_skipped": 0,
+    "positions_marked_by_team": 37,
+    "positions_deal_specific": 7,
+    "_pre_cleanup": {
+      "positions": 45,
+      "leave_alone": 17,
+      "positions_skipped": 1,
+      "positions_deal_specific": 6
+    },
+    "_totals_note": "positions 45->44 (moved #34 out). leave_alone 17->21 (+1 moved #34, +3 added operative-core). positions_skipped 1->0 (the only skip=true row was #34, now a leave-alone). positions_deal_specific 6->7 (#39 flipped to deal_specific=true).",
+    "_finalize_note": "positions and leave_alone counts UNCHANGED from FIXED. 5 rows sourced, 3 still unsupported, 0 promoted to seller array, 2 buyer-side deferred, 3 insert-reconcile (stripped->describe-only) flags."
+  },
+  "_finalize_meta": {
+    "produced_by": "RUBRIC finalize pass (Step 3): source / promote / reconcile",
+    "based_on": "rubric_seller_FIXED.json + firm_practice_catalog.json + inserts_library_CLEAN.json",
+    "assertion": "No position deleted. Only added/tagged. positions count unchanged (44); leave_alone unchanged (21). No promotions added to the seller positions array (the only firm_standard seller-side rubric_candidate was already covered; the two other firm_standard rubric_candidates are buyer-side and deferred).",
+    "task1_sourcing": {
+      "sourced": [
+        6,
+        10,
+        16,
+        18,
+        25
+      ],
+      "still_unsupported": [
+        17,
+        27,
+        35
+      ]
+    },
+    "task2_promotion": {
+      "promoted_seller_positions": [],
+      "promotion_eval": [
+        {
+          "cluster_id": "CL_knowledge_qualifier_added",
+          "recurrence": 5,
+          "side": "seller",
+          "action": "NOT_PROMOTED_already_covered",
+          "covered_by": [
+            2,
+            4
+          ],
+          "note": "Seller-side rubric_candidate (convert flat reps to 'actual knowledge'/'no written notice') is already covered by Position #2 (knowledge qualifier tied to named individual) and Position #4 (property-touching reps prefixed 'Seller has not received any written notice of…'). No new position added."
+        },
+        {
+          "cluster_id": "CL_reps_survival_period",
+          "recurrence": 5,
+          "action": "SKIPPED_no_rubric_candidate"
+        },
+        {
+          "cluster_id": "CL_title_policy_endorsement_cost_shift",
+          "recurrence": 5,
+          "action": "SKIPPED_no_rubric_candidate"
+        },
+        {
+          "cluster_id": "CL_deed_appurtenances_expansion",
+          "recurrence": 5,
+          "action": "SKIPPED_no_rubric_candidate"
+        },
+        {
+          "cluster_id": "CL_seller_consent_new_leases",
+          "recurrence": 5,
+          "action": "DEFERRED_buyer_side"
+        },
+        {
+          "cluster_id": "CL_required_cure_liens",
+          "recurrence": 5,
+          "action": "DEFERRED_buyer_side"
+        }
+      ],
+      "buyer_side_promotions_for_later": [
+        {
+          "cluster_id": "CL_seller_consent_new_leases",
+          "recurrence": 5,
+          "topic": "reps",
+          "rubric_candidate": "Buyer-side standing position: post-DD-period, Seller may not enter, amend, or terminate Leases/material Service Contracts without Buyer's prior written consent (Buyer's sole discretion after DD), else Buyer gets a Closing credit.",
+          "reason_deferred": "rubric_candidate is a BUYER-side standing position; do NOT add buyer logic to the seller rubric."
+        },
+        {
+          "cluster_id": "CL_required_cure_liens",
+          "recurrence": 5,
+          "topic": "title",
+          "rubric_candidate": "Buyer-side standing position: monetary/Seller-caused liens are Must-Cure Title Matters that Seller must remove and can never be Permitted Exceptions, regardless of Buyer objection.",
+          "reason_deferred": "rubric_candidate is a BUYER-side standing position; do NOT add buyer logic to the seller rubric."
+        }
+      ]
+    },
+    "task3_reconcile": {
+      "verbatim_refs": [
+        "seller-buyer-ack-non-estate-property (pos41)",
+        "seller-no-financing-contingency (pos42)",
+        "seller-title-as-seller-can-convey-fallback (pos43)"
+      ],
+      "stripped_flags": [
+        41,
+        42,
+        43
+      ],
+      "ok_keep": []
+    }
+  }
+}
